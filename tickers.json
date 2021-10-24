@@ -1,0 +1,12 @@
+{
+    "NWH-UN.TO": {
+        "boughtAt": null,
+        "count": 25,
+        "currency": "CAD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "name",
+        "soldAt": 30.57,
+        "totalInvestedSek": 2000
+    }
+}

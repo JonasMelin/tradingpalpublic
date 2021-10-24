@@ -1,0 +1,692 @@
+{
+    "AKSO.OL": {
+        "boughtAt": null,
+        "count": 248,
+        "currency": "NOK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Aker solutions",
+        "soldAt": 22.63,
+        "totalInvestedSek": 1548
+    },
+    "AMRC": {
+        "boughtAt": 59.33,
+        "count": 12,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Ameresco",
+        "soldAt": null,
+        "totalInvestedSek": 4963
+    },
+    "AR4.DE": {
+        "boughtAt": null,
+        "count": 20,
+        "currency": "EUR",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Aurelius equity",
+        "soldAt": 28.18,
+        "totalInvestedSek": 4099
+    },
+    "ATEA.OL": {
+        "boughtAt": null,
+        "count": 33,
+        "currency": "NOK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Atea",
+        "soldAt": 178.8,
+        "totalInvestedSek": 5411
+    },
+    "BBD-B.TO": {
+        "boughtAt": null,
+        "count": 381,
+        "currency": "CAD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Bombardier",
+        "soldAt": 2.22,
+        "totalInvestedSek": 2480
+    },
+    "BETS-B.ST": {
+        "boughtAt": 56.4,
+        "count": 103,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Betsson",
+        "soldAt": null,
+        "totalInvestedSek": 7202
+    },
+    "BHC.TO": {
+        "boughtAt": 32.0,
+        "count": 26,
+        "currency": "CAD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Bausch health",
+        "soldAt": null,
+        "totalInvestedSek": 4559
+    },
+    "BILL.ST": {
+        "boughtAt": null,
+        "count": 31,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Billerud korsn\u00e4s",
+        "soldAt": 187.95,
+        "totalInvestedSek": 3563
+    },
+    "BPF-UN.TO": {
+        "boughtAt": 13.34,
+        "count": 63,
+        "currency": "CAD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Boston Pizza",
+        "soldAt": null,
+        "totalInvestedSek": 5876
+    },
+    "BURE.ST": {
+        "boughtAt": 366,
+        "count": 16,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Bure",
+        "soldAt": null,
+        "totalInvestedSek": 4858
+    },
+    "CAPMAN.HE": {
+        "boughtAt": 2.62,
+        "count": 216,
+        "currency": "EUR",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Capman Oyj",
+        "soldAt": null,
+        "totalInvestedSek": 5367
+    },
+    "CCO.TO": {
+        "boughtAt": null,
+        "count": 26,
+        "currency": "CAD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Cameco",
+        "soldAt": 30.77,
+        "totalInvestedSek": 2132
+    },
+    "DANSKE.CO": {
+        "boughtAt": 105.7,
+        "count": 40,
+        "currency": "DKK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Danske Bank",
+        "soldAt": null,
+        "totalInvestedSek": 4886
+    },
+    "DBK.DE": {
+        "boughtAt": 10.27,
+        "count": 55,
+        "currency": "EUR",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Deutsche bank",
+        "soldAt": null,
+        "totalInvestedSek": 5430
+    },
+    "DNB.OL": {
+        "boughtAt": null,
+        "count": 27,
+        "currency": "NOK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "DNB",
+        "soldAt": 208.7,
+        "totalInvestedSek": 3700
+    },
+    "DPW.DE": {
+        "boughtAt": null,
+        "count": 9,
+        "currency": "EUR",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Deutsche Post",
+        "soldAt": 59.25,
+        "totalInvestedSek": 1871
+    },
+    "DTE.DE": {
+        "boughtAt": 16.88,
+        "count": 34,
+        "currency": "EUR",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Deutsche Telekom",
+        "soldAt": null,
+        "totalInvestedSek": 6189
+    },
+    "EOAN.DE": {
+        "boughtAt": null,
+        "count": 50,
+        "currency": "EUR",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "E.ON",
+        "soldAt": 11.33,
+        "totalInvestedSek": 4944
+    },
+    "EOLU-B.ST": {
+        "boughtAt": 152.2,
+        "count": 38,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Eolus vind",
+        "soldAt": null,
+        "totalInvestedSek": 6554
+    },
+    "EPR": {
+        "boughtAt": 48.78,
+        "count": 14,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "EPR properties",
+        "soldAt": null,
+        "totalInvestedSek": 5847
+    },
+    "EQNR.OL": {
+        "boughtAt": null,
+        "count": 25,
+        "currency": "NOK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Equinor",
+        "soldAt": 220.05,
+        "totalInvestedSek": 3378
+    },
+    "EWRK.ST": {
+        "boughtAt": null,
+        "count": 47,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "ework",
+        "soldAt": 122.8,
+        "totalInvestedSek": 4309
+    },
+    "EXC": {
+        "boughtAt": null,
+        "count": 13,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Exelon Corp",
+        "soldAt": 50.74,
+        "totalInvestedSek": 4948
+    },
+    "G5EN.ST": {
+        "boughtAt": 383,
+        "count": 16,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "G5 Entertainment",
+        "soldAt": null,
+        "totalInvestedSek": 7407
+    },
+    "GE": {
+        "boughtAt": 101.96,
+        "count": 7,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "General Electric",
+        "soldAt": null,
+        "totalInvestedSek": 6981
+    },
+    "HAV-B.ST": {
+        "boughtAt": null,
+        "count": 222,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Havsfrun",
+        "soldAt": 26,
+        "totalInvestedSek": 5747
+    },
+    "HEI.DE": {
+        "boughtAt": 61.7,
+        "count": 10,
+        "currency": "EUR",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Heidelberg Cement",
+        "soldAt": null,
+        "totalInvestedSek": 6734
+    },
+    "HPQ": {
+        "boughtAt": 26.14,
+        "count": 26,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "HP",
+        "soldAt": null,
+        "totalInvestedSek": 6793
+    },
+    "IMP-A-SDB.ST": {
+        "boughtAt": 79.1,
+        "count": 73,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Implantica",
+        "soldAt": null,
+        "totalInvestedSek": 7660
+    },
+    "INDU-C.ST": {
+        "boughtAt": null,
+        "count": 18,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Industriv\u00e4rlden",
+        "soldAt": 326.1,
+        "totalInvestedSek": 4923
+    },
+    "INVE-B.ST": {
+        "boughtAt": null,
+        "count": 27,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Investor",
+        "soldAt": 214.4,
+        "totalInvestedSek": 3881
+    },
+    "JAG.TO": {
+        "boughtAt": null,
+        "count": 171,
+        "currency": "CAD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Jaguar Mining",
+        "soldAt": 4.74,
+        "totalInvestedSek": 4961
+    },
+    "KIND-SDB.ST": {
+        "boughtAt": 107.05,
+        "count": 54,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "kindred",
+        "soldAt": null,
+        "totalInvestedSek": 3822
+    },
+    "KR": {
+        "boughtAt": null,
+        "count": 13,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Kroger",
+        "soldAt": 46.69,
+        "totalInvestedSek": 4488
+    },
+    "LATO-B.ST": {
+        "boughtAt": 271.7,
+        "count": 22,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Latour",
+        "soldAt": null,
+        "totalInvestedSek": 4415
+    },
+    "LUND-B.ST": {
+        "boughtAt": null,
+        "count": 10,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Lundbergf\u00f6retagen",
+        "soldAt": 574,
+        "totalInvestedSek": 4828
+    },
+    "MET": {
+        "boughtAt": 57.5,
+        "count": 12,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "MetLife",
+        "soldAt": null,
+        "totalInvestedSek": 6123
+    },
+    "MO": {
+        "boughtAt": null,
+        "count": 13,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Altria",
+        "soldAt": 50.38,
+        "totalInvestedSek": 5337
+    },
+    "MOWI.OL": {
+        "boughtAt": null,
+        "count": 23,
+        "currency": "NOK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Mowi",
+        "soldAt": 238.8,
+        "totalInvestedSek": 4325
+    },
+    "NDA-SE.ST": {
+        "boughtAt": null,
+        "count": 52,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Nordea",
+        "soldAt": 110.48,
+        "totalInvestedSek": 3451
+    },
+    "NOBI.ST": {
+        "boughtAt": 53.9,
+        "count": 107,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Nobia",
+        "soldAt": null,
+        "totalInvestedSek": 5963
+    },
+    "NWH-UN.TO": {
+        "boughtAt": 12.83,
+        "count": 65,
+        "currency": "CAD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Northwest healthcare",
+        "soldAt": null,
+        "totalInvestedSek": 5842
+    },
+    "ORES.ST": {
+        "boughtAt": 144,
+        "count": 40,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "\u00d6resund",
+        "soldAt": null,
+        "totalInvestedSek": 6368
+    },
+    "ORK.OL": {
+        "boughtAt": null,
+        "count": 66,
+        "currency": "NOK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Orkla",
+        "soldAt": 88.1,
+        "totalInvestedSek": 5402
+    },
+    "POOL-B.ST": {
+        "boughtAt": null,
+        "count": 392,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Poolia",
+        "soldAt": 14.65,
+        "totalInvestedSek": 4080
+    },
+    "RATO-B.ST": {
+        "boughtAt": null,
+        "count": 95,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Ratos",
+        "soldAt": 60.45,
+        "totalInvestedSek": 3633
+    },
+    "RIO": {
+        "boughtAt": null,
+        "count": 9,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Rio Tinto",
+        "soldAt": 68.82,
+        "totalInvestedSek": 5146
+    },
+    "RROS.ST": {
+        "boughtAt": 9.28,
+        "count": 620,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Rottneros",
+        "soldAt": null,
+        "totalInvestedSek": 6419
+    },
+    "RWE.DE": {
+        "boughtAt": 29.22,
+        "count": 19,
+        "currency": "EUR",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "RWE",
+        "soldAt": null,
+        "totalInvestedSek": 6010
+    },
+    "SAMPO.HE": {
+        "boughtAt": 38.58,
+        "count": 15,
+        "currency": "EUR",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Sampo",
+        "soldAt": null,
+        "totalInvestedSek": 5981
+    },
+    "SEMC.ST": {
+        "boughtAt": 118.4,
+        "count": 48,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Semcon",
+        "soldAt": null,
+        "totalInvestedSek": 5350
+    },
+    "SHI": {
+        "boughtAt": null,
+        "count": 24,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Sinopec Shanghai",
+        "soldAt": 27.63,
+        "totalInvestedSek": 6735
+    },
+    "SKUE.OL": {
+        "boughtAt": null,
+        "count": 29,
+        "currency": "NOK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Skue sparbank",
+        "soldAt": 194,
+        "totalInvestedSek": 4560
+    },
+    "SNP": {
+        "boughtAt": null,
+        "count": 12,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "China Petroleum",
+        "soldAt": 52.59,
+        "totalInvestedSek": 7151
+    },
+    "SPWR": {
+        "boughtAt": null,
+        "count": 24,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Sunpower Corp",
+        "soldAt": 26.74,
+        "totalInvestedSek": 5532
+    },
+    "SSAB-B.ST": {
+        "boughtAt": 35.8,
+        "count": 161,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "SSAB",
+        "soldAt": null,
+        "totalInvestedSek": 5254
+    },
+    "STE-R.ST": {
+        "boughtAt": 141,
+        "count": 41,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Stora Enso",
+        "soldAt": null,
+        "totalInvestedSek": 4339
+    },
+    "SWED-a.ST": {
+        "boughtAt": null,
+        "count": 32,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Swedbank",
+        "soldAt": 175.4,
+        "totalInvestedSek": 4342
+    },
+    "T": {
+        "boughtAt": 26.14,
+        "count": 26,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "AT&T",
+        "soldAt": null,
+        "totalInvestedSek": 7238
+    },
+    "TEL2-B.ST": {
+        "boughtAt": null,
+        "count": 43,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Tele2",
+        "soldAt": 133.9,
+        "totalInvestedSek": 4637
+    },
+    "TELIA.ST": {
+        "boughtAt": null,
+        "count": 150,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Telia",
+        "soldAt": 38.47,
+        "totalInvestedSek": 5683
+    },
+    "TEO": {
+        "boughtAt": 5.07,
+        "count": 134,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Telecom Argentina",
+        "soldAt": null,
+        "totalInvestedSek": 7496
+    },
+    "TKA.DE": {
+        "boughtAt": null,
+        "count": 60,
+        "currency": "EUR",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Thyssenkrupp AG",
+        "soldAt": 9.44,
+        "totalInvestedSek": 5200
+    },
+    "TLX.DE": {
+        "boughtAt": null,
+        "count": 15,
+        "currency": "EUR",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Talanx",
+        "soldAt": 37.6,
+        "totalInvestedSek": 5218
+    },
+    "TUI1.DE": {
+        "boughtAt": 3.07,
+        "count": 186,
+        "currency": "EUR",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "TUI",
+        "soldAt": null,
+        "totalInvestedSek": 7204
+    },
+    "TXG.TO": {
+        "boughtAt": null,
+        "count": 58,
+        "currency": "CAD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Torex Gold",
+        "soldAt": 14.34,
+        "totalInvestedSek": 5359
+    },
+    "UIS": {
+        "boughtAt": null,
+        "count": 24,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Unisys",
+        "soldAt": 26.33,
+        "totalInvestedSek": 4857
+    },
+    "VNV.ST": {
+        "boughtAt": null,
+        "count": 49,
+        "currency": "SEK",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "VNV Global",
+        "soldAt": 116.0,
+        "totalInvestedSek": 4877
+    },
+    "VZ": {
+        "boughtAt": 52.22,
+        "count": 13,
+        "currency": "USD",
+        "lockCounter": 0,
+        "lockKey": 0,
+        "name": "Verizon",
+        "soldAt": null,
+        "totalInvestedSek": 6843
+    }
+}
