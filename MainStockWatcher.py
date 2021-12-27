@@ -7,23 +7,25 @@ import random
 import math
 import threading
 import pytz
+import MarketOpenHours
 from datetime import datetime
-
 
 class MainStockWatcher:
 
-    TIMER_DELAY_SEC = 15
-    REFRESH_INTERVAL_MIN = 14
-    MARKET_OPEN_HOUR = 9
-    MARKET_CLOSE_HOUR = 22
+    TIMER_DELAY_SEC = 3
+    MIN_REFRESH_INTERVAL_SEC = 240
+    MAX_REFRESH_INTERVAL_SEC = 600
 
-    def __init__(self, fileHandler):
+
+    def __init__(self, fileHandler, stocksFetcher):
+        self.NEXT_REFRESH_INTERVAL_SEC = self.MIN_REFRESH_INTERVAL_SEC
         self.timer = None
-        self.FORCE_REFRESH = True
+        self.FORCE_REFRESH = False
         self.QUICK_REFRESH = False
         self.globalLock = threading.Lock()
         self.fileHandler = fileHandler
-        self.fetcher = StocksFetcher.StocksFetcher()
+        self.marketOpenHours = MarketOpenHours.MarketOpenHours()
+        self.fetcher = stocksFetcher
         self.cachedAllStocks = {}
         self.cachedStocksToBuy = {}
         self.cachedStocksToSell = {}
@@ -67,7 +69,7 @@ class MainStockWatcher:
         self.timer = None
         try:
             if self._shallStocksBeUpdated():
-                self.updateAllStocks(self.FORCE_REFRESH)
+                self.updateAllStocks()
         finally:
             self.timer = threading.Timer(self.TIMER_DELAY_SEC, self.timerCallback)
             self.timer.start()
@@ -75,34 +77,28 @@ class MainStockWatcher:
 
     def _shallStocksBeUpdated(self):
 
-        if self.FORCE_REFRESH or (self.lastRefreshedTime < (int(time.time()) - (self.REFRESH_INTERVAL_MIN * 60)) and self.marketsOpenDaytime()):
+        if self.marketOpenHours.marketsOpenedOrClosed() or self.FORCE_REFRESH or (self.lastRefreshedTime < (int(time.time()) - (self.NEXT_REFRESH_INTERVAL_SEC))):
             return True
         else:
             return False
 
-    def marketsOpenDaytime(self):
+    def updateAllStocks(self):
 
-        hour = datetime.now(pytz.timezone('Europe/Stockholm')).hour
-        weekday = datetime.now(pytz.timezone('Europe/Stockholm')).weekday()
-
-        return (hour >= self.MARKET_OPEN_HOUR and hour < self.MARKET_CLOSE_HOUR) and (weekday >= 0 and weekday <= 4)
-
-    def updateAllStocks(self, force):
-
-        startTime = datetime.utcnow()
+        startTime = datetime.now(pytz.timezone('Europe/Stockholm'))
         print(f"\n{startTime} - Updating all stocks")
         self.reinitializeAllVariables()
-        myStocks = self.fileHandler.readFileFromDisk()
+        myStocks = self.fileHandler.readAssetsFromMongo()
         self.lastRefreshedTime = int(time.time())
 
         for nextStock, stockData in myStocks.items():
             try:
-
-                if not (force or self.isMarketOpen(nextStock)):
-                    self.skippedCounter += 1
+                if not self.marketOpenHours.isMarketOpen(nextStock):
+                    self.skippedCounter = self.skippedCounter + 1 if stockData['count'] > 0 else self.skippedCounter
                     continue
 
-                stockDetails = self.fetcher.fetchTickerInfo(nextStock, stockData['currency'], (stockData['lockKey'] > 0) or self.QUICK_REFRESH)
+                stockDetails = self.fetcher.fetchTickerInfo(nextStock, stockData['currency'],
+                                                            useCacheForDynamics=((stockData['lockKey'] > 0) or self.QUICK_REFRESH),
+                                                            getStaticData=False)
                 stockOwnName = stockData['name']
                 valueSek = int(stockDetails['price_in_sek'] * stockData['count'])
                 stockData['tickerIsLocked'] = True if stockData['lockKey'] > 0 else False
@@ -110,28 +106,37 @@ class MainStockWatcher:
 
                 soldAt = 10000000
                 boughtAt = 0
+                switchedAt = 0
+                transactionMode = Analyze.TransactionMode.Neutral
+
                 if 'soldAt' in stockData and stockData['soldAt']:
                     soldAt = stockData['soldAt']
+                    switchedAt = soldAt
                 if 'boughtAt' in stockData and stockData['boughtAt']:
                     boughtAt = stockData['boughtAt']
+                    switchedAt = boughtAt
 
-                if stockData['boughtAt'] is None and stockData['soldAt'] is not None:
+                if stockData['count'] > 0 and stockData['boughtAt'] is None and stockData['soldAt'] is not None:
                     self.sellModeStocks += 1
-                if stockData['boughtAt'] is not None and stockData['soldAt'] is None:
+                    transactionMode = Analyze.TransactionMode.Sell
+                if stockData['count'] > 0 and stockData['boughtAt'] is not None and stockData['soldAt'] is None:
                     self.buyModeStocks += 1
-                if stockData['boughtAt'] is None and stockData['soldAt'] is None:
+                    transactionMode = Analyze.TransactionMode.Buy
+                if stockData['count'] > 0 and stockData['boughtAt'] is None and stockData['soldAt'] is None:
                     self.neutralModeStocks += 1
+                    transactionMode = Analyze.TransactionMode.Neutral
+                if "switchedAt" in stockData:
+                    switchedAt = stockData["switchedAt"]
 
+                stockCountToSell = Analyze.howManyToSell(nextStock, valueSek, stockDetails['price_in_sek'], stockDetails['price'], boughtAt, soldAt, switchedAt, transactionMode)
 
-                stockCountToSell = Analyze.shallStockBeSold(valueSek, stockDetails['price_in_sek'], stockDetails['price'], boughtAt)
-
-                if stockCountToSell > 0:
+                if stockData['count'] > 0 and stockCountToSell > 0:
                     self.stocksToSell['list'].append({"tickerName": nextStock, "currentStock": stockData, "numberToSell": stockCountToSell,
                                               "singleStockPriceSek": stockDetails['price_in_sek'],
                                               "priceOrigCurrancy": stockDetails['price'], "currancy": stockData['currency']})
 
-                numberStocksToBuy = Analyze.stockCountToBuy(stockDetails['price_in_sek'], stockData['count'], stockData["totalInvestedSek"], stockDetails['price'], soldAt)
-                if numberStocksToBuy > 0:
+                numberStocksToBuy = Analyze.howManyToBuy(nextStock, valueSek, stockDetails['price_in_sek'], stockDetails['price'], boughtAt, soldAt, switchedAt, transactionMode)
+                if stockData['count'] > 0 and numberStocksToBuy > 0:
                     buyIndication = Analyze.getBuyIndication(valueSek, stockData["totalInvestedSek"])
                     self.stocksToBuy['list'].append({"tickerName": nextStock, "currentStock": stockData, "buyIndication": buyIndication,
                                              "numberToBuy": numberStocksToBuy, "singleStockPriceSek": stockDetails['price_in_sek'],
@@ -157,13 +162,10 @@ class MainStockWatcher:
                 self.allStocks["list"].append({"tickerName": nextStock, "currentStock": stockData,
                                                "singleStockPriceSek": stockDetails['price_in_sek'],
                                                "priceOrigCurrancy": stockDetails['price'], "currancy": stockData['currency'],
-                                               "trailingPE": stockDetails["trailingPE"],
-                                               "priceToSalesTrailing12Months": stockDetails["priceToSalesTrailing12Months"],
-                                               "trailingAnnualDividendYield": stockDetails["trailingAnnualDividendYield"],
-                                               "enterpriseValue": stockDetails["enterpriseValue"],
                                                })
 
-                self.successCounter += 1
+                if stockData['count'] > 0:
+                    self.successCounter += 1
 
                 if "manualOverridePriceSek" in stockData:
                     print(f"Warning: You have a manual override price for a stock that is available online! {stockOwnName}")
@@ -208,7 +210,9 @@ class MainStockWatcher:
             self.cachedStocksToSell = copy.deepcopy(self.stocksToSell)
             self.cachedAllStocks = copy.deepcopy(self.allStocks)
 
-        print(f"{datetime.utcnow()} - Done! updating all stocks   (Took: {(datetime.utcnow() - startTime).total_seconds():.2f}s)\n")
+        self.NEXT_REFRESH_INTERVAL_SEC = random.randint(self.MIN_REFRESH_INTERVAL_SEC, self.MAX_REFRESH_INTERVAL_SEC)
+
+        print(f"{datetime.now(pytz.timezone('Europe/Stockholm'))} - Done! updating all stocks   (Took: {(datetime.now(pytz.timezone('Europe/Stockholm')) - startTime).total_seconds():.2f}s)\n")
 
     def getStocksToBuyAsList(self):
         with self.globalLock:
@@ -221,36 +225,3 @@ class MainStockWatcher:
     def getAllStocks(self):
         with self.globalLock:
             return copy.deepcopy(self.cachedAllStocks)
-
-    def isMarketOpen(self, ticker):
-
-        if ".OL".lower() in ticker.lower():
-            return self.isTimeWithin(9, 17)
-        if ".ST" in ticker:
-            return self.isTimeWithin(9, 17)
-        if ".DE" in ticker:
-            return self.isTimeWithin(9, 17)
-        if ".HE" in ticker:
-            return self.isTimeWithin(9, 17)
-        if ".CO" in ticker:
-            return self.isTimeWithin(9, 17)
-        if ".TO" in ticker:
-            return self.isTimeWithin(15, 22)
-        if "." not in ticker:
-            return self.isTimeWithin(15, 22)
-
-        print(f"Open hours for ticker {ticker} not found")
-        return True
-
-    def isTimeWithin(self, openTime, closeTime):
-
-        currentHour = datetime.now(pytz.timezone('Europe/Stockholm')).hour
-
-        if currentHour >= openTime and currentHour <= closeTime:
-            return True
-        else:
-            return False
-
-
-
-

@@ -34,11 +34,12 @@ class StocksFetcher:
     # ################################################################################
     # Fetches info for a ticker...
     # ################################################################################
-    def fetchTickerInfo(self, ticker, currency, useCacheForDynamics=False):
+    def fetchTickerInfo(self, ticker, currency, useCacheForDynamics=False, getStaticData = True):
 
         self._refreshCurrencyConvertions()
         summary_data = self._fetchDynamicData(ticker, useCacheForDynamics)
-        self._getStaticData(summary_data, ticker)
+        if getStaticData:
+            self._getStaticData(summary_data, ticker)
         summary_data['price_in_sek'] = self._convertToSek(summary_data['price'], currency.upper())
         summary_data['convertToSekRatio'] = float(self.currencyConverter[currency.upper()])
 
@@ -194,5 +195,6 @@ class StocksFetcher:
 
 if __name__ == "__main__":
     fetcher = StocksFetcher()
-    print(fetcher.fetchTickerInfo("T"))
-    print(fetcher.fetchTickerInfo("T"))
+    print(fetcher.fetchTickerInfo("T", "USD"))
+    print(fetcher.fetchTickerInfo("T", "USD"))
+    print(fetcher.fetchTickerInfo("GENE.ST", "SEK"))

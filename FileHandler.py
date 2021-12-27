@@ -1,27 +1,22 @@
-import os
-import json
-import threading
 import copy
 import datetime, pytz
+from pymongo import ASCENDING, MongoClient
+import os
 
-AUTO_RELEASE_LOCKS_AFTER = 4
+PRODUCTION = os.getenv('TP_PROD')
 
-TICKERS_FILE_ALTERNATIVE2 = './tickers.json'
-TICKERS_FILE_ALTERNATIVE1 = '/tickers/tickers.json'
-ACTIVE_FILE_PATH = None
+if PRODUCTION is not None and PRODUCTION == "true":
+    print("RUNNING IN PRODUCTION MODE!!")
+else:
+    print("Running in dev mode cause environment variable \"TP_PROD=true\" was not set...")
+    PRODUCTION = None
 
-if os.path.isfile(TICKERS_FILE_ALTERNATIVE1):
-    ACTIVE_FILE_PATH = TICKERS_FILE_ALTERNATIVE1
-if os.path.isfile(TICKERS_FILE_ALTERNATIVE2):
-    ACTIVE_FILE_PATH = TICKERS_FILE_ALTERNATIVE2
+AUTO_RELEASE_LOCKS_AFTER = 3
 
-if ACTIVE_FILE_PATH is None:
-    print("Please provide a path you your tickers.json file...")
-    exit(37)
-
-print(f"Reading tickers from {ACTIVE_FILE_PATH}")
-
-globalFileLock = threading.RLock()
+mongoPort = 27018
+mongoHost = "192.168.1.50"
+databaseName = "TP"
+collectionNameStockAssets = f"stockAssets"
 
 class FileHandler:
 
@@ -29,22 +24,54 @@ class FileHandler:
         self.lastFileHash = 0
         self.changeLog = []
 
-    def readFileFromDisk(self):
-        with globalFileLock:
-            with open(ACTIVE_FILE_PATH, "r") as jsonFile:
-                jsonLoaded = json.load(jsonFile)
-                if self.incrementLockCounter(jsonLoaded):
-                    self.writeFileToDisk(jsonLoaded)
-                self.lastFileHash = hash(str(jsonLoaded))
-                return jsonLoaded
+    def init(self):
+        self.DB, self.COLLECTION, self.MONGO_CLIENT = self._connectDb(mongoHost, mongoPort, databaseName, collectionNameStockAssets)
+        self._testMongoConnection(self.MONGO_CLIENT)
+        self._fixIndex()
 
-    def writeFileToDisk(self, file):
+    def _connectDb(self, mongoHost, mongoPort, databaseName, collectionName):
 
-        print("Saving data to disk... ")
+        dbConnection = MongoClient(host=mongoHost, port=mongoPort)
+        db = dbConnection[databaseName]
+        collection = db[collectionName]
+        return db, collection, dbConnection
 
-        with globalFileLock:
-            with open(ACTIVE_FILE_PATH, "w") as jsonFile:
-                jsonFile.write(json.dumps(file, indent=4, sort_keys=True))
+    def _testMongoConnection(self, dbConnection):
+
+        try:
+            print(f"{datetime.datetime.now(pytz.timezone('Europe/Stockholm'))} Mongo connection OK! Version: {dbConnection.server_info()['version']}")
+        except Exception as ex:
+            raise ValueError(f"{datetime.datetime.utcnow()} Mongo connection FAILED! (B)  {ex}")
+
+    def _fixIndex(self):
+        self.DB[collectionNameStockAssets].create_index([('ticker', ASCENDING)], unique=True)
+
+    def readAssetsFromMongo(self):
+
+        data = self.COLLECTION.find()
+        retData = {}
+
+        for entry in data:
+            ticker = entry['ticker']
+            del(entry['ticker'])
+            del(entry['_id'])
+            retData[ticker] = entry
+
+        return retData
+
+    def writeAssetsToMongo(self, file):
+
+        for ticker, entry in file.items():
+            newEntry = copy.deepcopy(entry)
+            newEntry['ticker'] = ticker
+
+            if PRODUCTION:
+                self.COLLECTION.update_one(
+                    {"ticker": ticker},
+                    {"$set":
+                         newEntry
+                    },
+                    upsert=True)
 
     def incrementLockCounter(self, file):
 
@@ -97,5 +124,5 @@ class FileHandler:
 
 if __name__ == "__main__":
     f = FileHandler()
-    fileFromDisk = f.readFileFromDisk()
-    f.writeFileToDisk(fileFromDisk)
+    f.init()
+    fileFromDisk = f.readAssetsFromMongo()

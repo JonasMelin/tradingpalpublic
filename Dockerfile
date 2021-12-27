@@ -6,9 +6,10 @@ RUN pip install requests==2.25.1
 RUN pip install lxml==4.6.3
 RUN pip install bs4==0.0.1
 RUN pip install pytz==2020.5
+RUN pip install pymongo==3.12.0
 RUN pip list
 
-ADD Analyze.py MainStockWatcher.py RestServer.py StocksFetcher.py FileHandler.py /
+ADD Analyze.py MainStockWatcher.py RestServer.py StocksFetcher.py FileHandler.py MarketOpenHours.py /
 
 ENTRYPOINT ["python3","/RestServer.py"]
 

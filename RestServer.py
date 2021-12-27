@@ -4,16 +4,22 @@ import MainStockWatcher
 import threading
 import json
 import FileHandler
+import StocksFetcher
 import random
 import math
 import copy
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 REFRESH_DELAY_SEC = 30
 
 app = Flask(__name__)
 globalLock = threading.Lock()
 fileHandler = FileHandler.FileHandler()
-stockWatcher = MainStockWatcher.MainStockWatcher(fileHandler)
+stocksFetcher = StocksFetcher.StocksFetcher()
+fileHandler.init()
+stockWatcher = MainStockWatcher.MainStockWatcher(fileHandler, stocksFetcher)
 
 @app.route("/tradingpal")
 def index():
@@ -49,7 +55,7 @@ def lockTicker():
         if "ticker" not in inputData:
             return Response("please provide ticker to lock", status=400)
 
-        file = fileHandler.readFileFromDisk()
+        file = fileHandler.readAssetsFromMongo()
         inputTickerName = inputData["ticker"]
 
         if inputTickerName not in file:
@@ -64,7 +70,7 @@ def lockTicker():
         lockKey = math.floor(math.fabs(random.randint(1000000, 1000000000)))
         fileTicker["lockKey"] = lockKey
         fileTicker["lockCounter"] = 0
-        fileHandler.writeFileToDisk(file)
+        fileHandler.writeAssetsToMongo(file)
         stockWatcher.forceRefresh(QUICK_REFRESH=True)
         return json.dumps({"lockKey": lockKey})
 
@@ -81,7 +87,7 @@ def unlockTicker():
         if "lockKey" not in inputData:
             return Response("please provide lockKey", status=403)
 
-        file = fileHandler.readFileFromDisk()
+        file = fileHandler.readAssetsFromMongo()
         inputTickerName = inputData["ticker"]
         inputLockKey = inputData["lockKey"]
 
@@ -99,7 +105,7 @@ def unlockTicker():
 
         fileTicker["lockKey"] = 0
         fileTicker["lockCounter"] = 0
-        fileHandler.writeFileToDisk(file)
+        fileHandler.writeAssetsToMongo(file)
         stockWatcher.forceRefresh()
         return Response(status=200)
 
@@ -116,7 +122,7 @@ def deleteTicker():
         if "lockKey" not in inputData:
             return Response("please provide lockKey", status=403)
 
-        file = fileHandler.readFileFromDisk()
+        file = fileHandler.readAssetsFromMongo()
         inputTickerName = inputData["ticker"]
         inputLockKey = inputData["lockKey"]
 
@@ -131,7 +137,7 @@ def deleteTicker():
             return Response("Wrong lockKey. Cannot delete ticker!", status=403)
 
         del(file[inputTickerName])
-        fileHandler.writeFileToDisk(file)
+        fileHandler.writeAssetsToMongo(file)
         stockWatcher.forceRefresh()
         return Response(status=200)
 
@@ -152,73 +158,112 @@ def updateStock():
         if "ticker" not in inputData:
             return Response("please provide ticker", status=400)
 
-        file = fileHandler.readFileFromDisk()
+        fullMongoData = fileHandler.readAssetsFromMongo()
         inputTickerName = inputData["ticker"]
 
-        if inputTickerName not in file:
-            file[inputTickerName] = {}
+        if inputTickerName not in fullMongoData:
+            fullMongoData[inputTickerName] = {}
 
-        fileTicker = file[inputTickerName]
-        copyOfFileTicker = copy.deepcopy(fileTicker)
+        tickerInfoFromMongo = fullMongoData[inputTickerName]
+        copyOfTickerInfoFromMongo = copy.deepcopy(tickerInfoFromMongo)
 
-        if "lockKey" in fileTicker and fileTicker["lockKey"] == 0:
+        if "lockKey" in tickerInfoFromMongo and tickerInfoFromMongo["lockKey"] == 0:
             return Response("This ticker is not locked and can hence not be updated. Please lock it first", status=400)
 
         if "lockKey" in inputData:
             newValue = inputData["lockKey"]
             if not isinstance(newValue, (int)):
                 return Response("lockKey must be int", status=400)
-            if "lockKey" in fileTicker and fileTicker["lockKey"] != newValue:
+            if "lockKey" in tickerInfoFromMongo and tickerInfoFromMongo["lockKey"] != newValue:
                 return Response("lockKey does not match!", status=403)
-            fileTicker["lockKey"] = 0
-            fileTicker["lockCounter"] = 0
+            tickerInfoFromMongo["lockKey"] = 0
+            tickerInfoFromMongo["lockCounter"] = 0
         else:
             return Response("You need lockKey in order to update data", status=403)
 
         if "boughtAt" in inputData:
-            newValue = inputData["boughtAt"]
-            if not isinstance(newValue, (int, float)) and newValue is not None:
+            newBoughtAtValue = inputData["boughtAt"]
+            if not isinstance(newBoughtAtValue, (int, float)) and newBoughtAtValue is not None:
                 return Response("boughtAt must be float, int or null", status=400)
-            fileTicker["boughtAt"] = newValue
+
+            if "switchedAt" in tickerInfoFromMongo:
+                newSwitchValue = tickerInfoFromMongo["switchedAt"]
+            else:
+                newSwitchValue = None
+
+            if "boughtAt" in tickerInfoFromMongo:
+                newSwitchValue = checkMadeTheSwitch(tickerInfoFromMongo["boughtAt"], newBoughtAtValue, newSwitchValue)
+
+            tickerInfoFromMongo["switchedAt"] = newSwitchValue
+            tickerInfoFromMongo["boughtAt"] = newBoughtAtValue
         if "soldAt" in inputData:
-            newValue = inputData["soldAt"]
-            if not isinstance(newValue, (int, float)) and newValue is not None:
+            newSoldAtValue = inputData["soldAt"]
+            if not isinstance(newSoldAtValue, (int, float)) and newSoldAtValue is not None:
                 return Response("soldAt must be float, int or null", status=400)
-            fileTicker["soldAt"] = newValue
+
+            if "switchedAt" in tickerInfoFromMongo:
+                newSwitchValue = tickerInfoFromMongo["switchedAt"]
+            else:
+                newSwitchValue = None
+
+            if "soldAt" in tickerInfoFromMongo:
+                newSwitchValue = checkMadeTheSwitch(tickerInfoFromMongo["soldAt"], newSoldAtValue, newSwitchValue)
+
+            tickerInfoFromMongo["switchedAt"] = newSwitchValue
+            tickerInfoFromMongo["soldAt"] = newSoldAtValue
         if "count" in inputData:
             newValue = inputData["count"]
             if not isinstance(newValue, (int)):
                 return Response("count must be int", status=400)
-            fileTicker["count"] = newValue
+            tickerInfoFromMongo["count"] = newValue
         if "name" in inputData:
             newValue = inputData["name"]
             if not isinstance(newValue, (str)):
                 return Response("name must be string", status=400)
-            fileTicker["name"] = newValue
+            tickerInfoFromMongo["name"] = newValue
         if "totalInvestedSek" in inputData:
             newValue = inputData["totalInvestedSek"]
             if not isinstance(newValue, (int)):
                 return Response("totalInvestedSek must be int", status=400)
-            fileTicker["totalInvestedSek"] = newValue
+            tickerInfoFromMongo["totalInvestedSek"] = newValue
 
-        if "boughtAt" not in fileTicker: return Response("You did not provide a value for boughtAt", status=400)
-        if "count" not in fileTicker: return Response("You did not provide a value for count", status=400)
-        if "lockKey" not in fileTicker: return Response("You did not provide a value for lockKey", status=400)
-        if "name" not in fileTicker: return Response("You did not provide a value for name", status=400)
-        if "soldAt" not in fileTicker: return Response("You did not provide a value for soldAt", status=400)
-        if "totalInvestedSek" not in fileTicker: return Response("You did not provide a value for totalInvestedSek", status=400)
+        if "boughtAt" not in tickerInfoFromMongo: return Response("You did not provide a value for boughtAt", status=400)
+        if "count" not in tickerInfoFromMongo: return Response("You did not provide a value for count", status=400)
+        if "lockKey" not in tickerInfoFromMongo: return Response("You did not provide a value for lockKey", status=400)
+        if "name" not in tickerInfoFromMongo: return Response("You did not provide a value for name", status=400)
+        if "soldAt" not in tickerInfoFromMongo: return Response("You did not provide a value for soldAt", status=400)
+        if "totalInvestedSek" not in tickerInfoFromMongo: return Response("You did not provide a value for totalInvestedSek", status=400)
 
-        if fileTicker['boughtAt'] is not None and fileTicker['soldAt'] is not None:
+        if tickerInfoFromMongo['boughtAt'] is not None and tickerInfoFromMongo['soldAt'] is not None:
             return Response("At least one of soldAt or boughtAt must be null ")
 
-        fileHandler.writeFileToDisk(file)
-        fileHandler.writeStockChangeLog(copyOfFileTicker, fileTicker, tradedByBot)
+        fileHandler.writeAssetsToMongo(fullMongoData)
+        fileHandler.writeStockChangeLog(copyOfTickerInfoFromMongo, tickerInfoFromMongo, tradedByBot)
         stockWatcher.forceRefresh()
         return Response(status=200)
+
+@app.route("/tradingpal/getTickerValue", methods = ['GET'])
+def getTickerValue():
+    ticker = request.args.get("ticker")
+    currency = request.args.get("currency")
+
+    if ticker is None or currency is None:
+        return "Missing arg ticker or currency"
+
+    return json.dumps(stocksFetcher.fetchTickerInfo(ticker, currency, useCacheForDynamics=True, getStaticData=False), indent=4)
 
 @app.route("/tradingpal/getFirstChangeLogItem", methods = ['GET'])
 def getChangeLog():
     return json.dumps(fileHandler.takeFirstChangeLogItem(), indent=4)
+
+
+def checkMadeTheSwitch(oldTradeVal, newTradeVal, currentSwitchValue):
+
+    if oldTradeVal == None and newTradeVal is not None:
+        return newTradeVal
+    else:
+        return currentSwitchValue
+
 
 if __name__ == "__main__":
 
